@@ -16,15 +16,10 @@ df_list = [pd.read_csv(f) for f in all_files]
 df = pd.concat(df_list, ignore_index=True)
 df['tourney_date'] = pd.to_datetime(df['tourney_date'], format='%Y%m%d', errors='coerce')
 
-#Correlation Heatmap
-numeric_cols = ['minutes', 'w_ace', 'w_df', 'w_svpt', 'w_1stIn', 'w_1stWon', 'l_ace', 'l_df']
-corr = df[numeric_cols].corr()
-
-
 ratings = {}
 
 def get_rating(player):
-    return ratings.get(player, 1500)
+    return ratings.get(player, 1500)  # Default Elo rating is 1500
 
 winner_elos = []
 loser_elos = []
@@ -39,7 +34,7 @@ for _, row in df.iterrows():
     # Update ratings (Standard K=20)
     expected_w = 1 / (1 + 10 ** ((l_elo - w_elo) / 400))
     ratings[w_name] = w_elo + 20 * (1 - expected_w)
-    ratings[l_elo] = l_elo + 20 * (0 - expected_w)
+    ratings[l_name] = l_elo + 20 * (0 - expected_w)
 
 df['elo_winner'] = winner_elos
 df['elo_loser'] = loser_elos
