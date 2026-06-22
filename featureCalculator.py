@@ -24,13 +24,17 @@ import os
 
 data_dir = 'tennis_atp-master'
 
-print("Loading data files (2000-present, excluding Doubles and Futures)...")
-all_files = glob.glob(os.path.join(data_dir, "atp_matches_[2-9]*.csv")) + \
-            glob.glob(os.path.join(data_dir, "atp_matches_qual_[2-9]*.csv")) + \
-            glob.glob(os.path.join(data_dir, "atp_matches_chall_[2-9]*.csv"))
+print("Loading data files (1990-present for dictionary Burn-in)...")
+all_files = glob.glob(os.path.join(data_dir, "atp_matches_199*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_20*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_qual_199*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_qual_20*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_chall_199*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_chall_20*.csv"))
 
 df_list = [pd.read_csv(f) for f in all_files]
 df = pd.concat(df_list, ignore_index=True)
+
 
 print("Cleaning and sorting data chronologically...")
 df['tourney_date'] = pd.to_datetime(df['tourney_date'], format='%Y%m%d', errors='coerce')
@@ -184,4 +188,8 @@ df['clutch_diff'] = df['w_clutch'] - df['l_clutch']
 print("Features engineered successfully.")
 print(df[['winner_name', 'loser_name', 'w_home', 'l_home', 'w_clutch', 'l_clutch']].tail())
 
-df.to_csv("features_atp_matches.csv", index=False)
+print("Filtering out the 90s burn-in period for final features...")
+df_final = df[df['tourney_date'].dt.year >= 2000].reset_index(drop=True)
+
+print(f"Saving final features_atp_matches_1990-2000_burn_in.csv. Total matches: {len(df_final)}")
+df_final.to_csv("features_atp_matches_1990-2000_burn_in.csv", index=False)

@@ -1,9 +1,9 @@
 import pandas as pd
 
 # Define file paths
-elo_file = 'atp_meccsek_elo_pontokkal.csv'
-features_file = 'features_atp_matches.csv'  
-output_file = 'atp_matches_combined.csv'
+elo_file = 'atp_meccsek_elo_pontokkal_1990_2000_burn_in.csv'
+features_file = 'features_atp_matches_1990-2000_burn_in.csv'  
+output_file = 'atp_matches_combined_1990-2000_burn_in.csv'
 
 print("Loading datasets...")
 df_elo = pd.read_csv(elo_file)

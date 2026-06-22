@@ -6,10 +6,15 @@ import matplotlib.pyplot as plt
 
 data_dir = 'tennis_atp-master'
 
-print("Loading data files (2000-present, excluding Doubles and Futures)...")
-all_files = glob.glob(os.path.join(data_dir, "atp_matches_[2-9]*.csv")) + \
-            glob.glob(os.path.join(data_dir, "atp_matches_qual_[2-9]*.csv")) + \
-            glob.glob(os.path.join(data_dir, "atp_matches_chall_[2-9]*.csv"))
+
+print("Loading data files (1990-present for Elo Burn-in)...")
+# Beolvassuk a 90-es éveket (1990-1999) és a 2000 utániakat is
+all_files = glob.glob(os.path.join(data_dir, "atp_matches_199*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_20*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_qual_199*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_qual_20*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_chall_199*.csv")) + \
+            glob.glob(os.path.join(data_dir, "atp_matches_chall_20*.csv"))
 
 df_list = [pd.read_csv(f) for f in all_files]
 df = pd.concat(df_list, ignore_index=True)
@@ -85,4 +90,9 @@ plt.title("Distribution of Overall Elo Advantage by Surface (Constant K=20)")
 plt.ylabel("Overall Elo Difference (Winner - Loser)")
 plt.show()
 
-df.to_csv("atp_meccsek_elo_pontokkal.csv", index=False)
+
+print("Filtering out the 90s burn-in period...")
+df_final = df[df['tourney_date'].dt.year >= 2000]
+
+print(f"Saving final dataset. Total matches: {len(df_final)}")
+df_final.to_csv("atp_meccsek_elo_pontokkal_1990_2000_burn_in.csv", index=False)
