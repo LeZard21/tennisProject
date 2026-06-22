@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score
 
 # 1. Data Loading
 print("🌲 Loading data...")
-df = pd.read_csv("features_atp_matches.csv")
+df = pd.read_csv("atp_matches_combined_1990-2000_burn_in.csv")
 df['tourney_date'] = pd.to_datetime(df['tourney_date'])
 
 # 2. Anonymization (Coin Flip)
@@ -18,6 +18,8 @@ df['target'] = coin_flip.astype(int)
 # 3. Anonymous Feature Calculation (P1 - P2)
 print("Generating anonymous differences from new features...")
 features_dict = {
+    'diff_elo_overall': ('elo_w_overall', 'elo_l_overall'),
+    'diff_elo_surface': ('elo_w_surface', 'elo_l_surface'),
     'diff_h2h': ('w_h2h', 'l_h2h'),
     'diff_streak': ('w_streak', 'l_streak'),
     'diff_fatigue': ('w_fatigue', 'l_fatigue'),
